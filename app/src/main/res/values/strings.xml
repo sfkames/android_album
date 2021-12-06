@@ -7,5 +7,18 @@
     <string name="album_thumbnail">Album Thumbnail</string>
     <string name="album_name">Sample Album</string>
     <string name="rename_hint">Title...</string>
+    <string name="add_photo">Add Photo</string>
+    <string name="remove_photo">Remove Photo</string>
+    <string name="add_tag">Add Tag</string>
+    <string name="photo">Photo</string>
+    <string name="location_text">Location</string>
+    <string name="person_text">Name</string>
+    <string name="person_label">Person</string>
+    <string name="return_button">Return to Album</string>
+    <string name="add_button">Add Tag</string>
+    <string name="slide_button">View Slideshow</string>
+    <string name="back_button">Return to All Albums</string>
+    <string name="slideShowNext"><![CDATA[>]]></string>
+    <string name="slideShowBack"><![CDATA[<]]></string>
 
 </resources>

@@ -1,5 +1,7 @@
 package com.example.photos;
 
+import android.graphics.Bitmap;
+
 import java.io.File;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -22,9 +24,7 @@ public class Album implements Serializable {
     private String Name;
     private ArrayList<Photo> Photos;
     private int numOfPhotos;
-    private SimpleDateFormat oldestDate;
-    private SimpleDateFormat newestDate;
-    private String coverPath;
+    private Bitmap coverPath;
 
     /**
      * Album constructor creates an instance of Album.
@@ -38,12 +38,9 @@ public class Album implements Serializable {
         Photos = photos;
         if (photos != null) {
             if (photos.size() != 0) {
-                this.coverPath = photos.get(0).getPath();
+                this.coverPath = photos.get(0).getImage();
             }
-        }else{
-            Photos = new ArrayList<Photo>();
         }
-
     }
 
     /**
@@ -57,8 +54,8 @@ public class Album implements Serializable {
     public void updateCoverPath() {
         if (Photos != null) {
             if (Photos.size() > 0) {
-                if (Photos.get(0).getPath() != null) {
-                    this.coverPath = Photos.get(0).getPath();
+                if (Photos.get(0).getImage() != null) {
+                    this.coverPath = Photos.get(0).getImage();
                 }
             } else {
                 this.coverPath = null;
@@ -130,55 +127,13 @@ public class Album implements Serializable {
     }
 
     /**
-     * getOldestDate() returns the SimpleDateFormat for the photo in the Album with
-     * the oldest corresponding date
-     *
-     * @return the date of the oldest photo in the Album
-     */
-
-    public SimpleDateFormat getOldestDate() {
-        return oldestDate;
-    }
-
-    /**
-     * setOldestDate() takes in the SimpleDateFormat for the photo in the Album with
-     * the oldest corresponding date and sets it for the specified Album
-     *
-     * @param the date of the oldest photo in the Album
-     */
-    public void setOldestDate(SimpleDateFormat oldestDate) {
-        this.oldestDate = oldestDate;
-    }
-
-    /**
-     * getNewestDate() returns the SimpleDateFormat for the photo in the Album with
-     * the newest corresponding date
-     *
-     * @return the date of the newest photo in the Album
-     */
-
-    public SimpleDateFormat getNewestDate() {
-        return newestDate;
-    }
-
-    /**
-     * setNewestDate() takes in the SimpleDateFormat for the photo in the Album with
-     * the newest corresponding date and sets it for the specified Album
-     *
-     * @param the date of the newest photo in the Album
-     */
-    public void setNewestDate(SimpleDateFormat newestDate) {
-        this.newestDate = newestDate;
-    }
-
-    /**
      * getCoverPath() returns the String path of the first photo in the Album to use
      * as the cover photo for the Album's representation in the application
      *
      * @return the path of the first photo in the Photo ArrayList of the Album
      */
 
-    public String getCoverPath() {
+    public Bitmap getCoverPath() {
         return coverPath;
     }
 
@@ -188,13 +143,13 @@ public class Album implements Serializable {
      *
      * @param the date of the oldest photo in the Album
      */
-    public void setCoverPath(String coverPath) {
+    public void setCoverPath(Bitmap coverPath) {
         this.coverPath = coverPath;
     }
 
     public static Album emptyAlbum(){
         ArrayList<Photo>  photos = new ArrayList<Photo>();
-        photos.add(new Photo("res" + File.separator+"drawable"+File.separator+"question_mark.jpeg"));
+        photos.add(new Photo(null));
         Album emptyAlbum = new Album("No Albums",photos);
         return emptyAlbum;
     }

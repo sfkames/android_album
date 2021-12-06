@@ -2,6 +2,7 @@ package com.example.photos;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -52,6 +53,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 handleRename();
+            }
+        });
+
+        openBtn = findViewById(R.id.openBtn);
+        openBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleOpen();
             }
         });
 
@@ -163,4 +172,18 @@ public class MainActivity extends AppCompatActivity {
         renameText.setText("");
     }
 
+    private void handleOpen() {
+
+        if (selectedIndex == -1 || selectedIndex >= albumList.size()){
+            return;
+        }
+        Intent intent = new Intent(this, PhotosViewActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt("album", selectedIndex);
+        intent.putExtras(bundle);
+        startActivity(intent);
+
+
+
+    }
 }

@@ -1,5 +1,7 @@
 package com.example.photos;
 
+import android.graphics.Bitmap;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,31 +14,18 @@ import java.util.Calendar;
  */
 
 public class Photo implements Serializable {
-    private String path;
+    private Bitmap image;
     private Calendar dateTaken;
-    private ArrayList<Tags> tags; // Still have to create tags
-    private String caption;
+    private ArrayList<Tags> tags;
 
-    /**
-     * Constructor takes a String for the path of the Photo
-     *
-     * @param path String representation of the Photo file's path
-     */
 
-    public Photo(String path) {
-        this.path = path;
+    public Photo(Bitmap image) {
+        this.image = image;
 
     }
 
-    /**
-     * getPath() method returns the String representation of the respective Photo's
-     * path
-     *
-     * @return path String representation of the Photo file's path
-     */
-
-    public String getPath() {
-        return path;
+    public Bitmap getImage() {
+        return image;
     }
 
     /**
@@ -46,16 +35,9 @@ public class Photo implements Serializable {
      * @param path String representation of the Photo file's path
      */
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setImage(Bitmap image) {
+        this.image = image;
     }
-
-    /**
-     * getDateTaken() method returns a String formatted as month, date, and year of
-     * the respective Photo's date that it was taken
-     *
-     * @return String in format of month, day, year
-     */
 
     public String getDateTaken() {
 
@@ -98,28 +80,6 @@ public class Photo implements Serializable {
      * getCaption() returns the String of the respective Photo's caption
      *
      * @return caption String of the respective Photo's caption
-     */
-
-    public String getCaption() {
-        return caption;
-    }
-
-    /**
-     * setCaption() take in a String and sets it as the respective Photo's caption
-     *
-     * @param caption String of the respective Photo's caption
-     */
-
-    public void setCaption(String caption) {
-        this.caption = caption;
-    }
-
-    /**
-     * getTags() returns an ArrayList of tags, including custom tags, for the
-     * respective photo
-     *
-     * @return tags ArrayList of tags, including custom tags, for the respective
-     *         photo
      */
 
     public ArrayList<Tags> getTags() {
