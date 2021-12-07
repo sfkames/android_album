@@ -10,11 +10,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Photos">
         <activity
+            android:name=".Search"
+            android:exported="false" />
+        <activity
             android:name=".SlideShow"
             android:exported="false" />
         <activity
             android:name=".PhotosViewActivity"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".TagActivity"
+            android:parentActivityName=".PhotosViewActivity" />
+        <activity
+            android:name=".EditTagActivity"
+            android:parentActivityName=".PhotosViewActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

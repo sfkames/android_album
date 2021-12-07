@@ -1,10 +1,19 @@
 package com.example.photos;
 
-import java.io.File;
+
+import static androidx.core.app.ActivityCompat.startActivityForResult;
+
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -21,9 +30,9 @@ public class Serialize implements Serializable {
         oos.writeObject(user);
 
     }
-    public static boolean save(ArrayList<Album> album, FileOutputStream fos) {
+    public static boolean save( FileOutputStream fos) {
         try {
-            writeAlbums(album, fos);
+            writeAlbums(albums, fos);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
@@ -46,6 +55,14 @@ public class Serialize implements Serializable {
             e.printStackTrace();
         }
         return false;
+
+    }
+    public static Bitmap getImage(String Uri, Context context) throws FileNotFoundException {
+        final android.net.Uri imageUri = android.net.Uri.parse(Uri);
+
+        final InputStream imageStream = context.getContentResolver().openInputStream(imageUri);
+        final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+        return selectedImage;
 
     }
 }

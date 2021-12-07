@@ -30,7 +30,10 @@
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:text="TextView"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
             <FrameLayout
                 android:layout_width="410dp"
@@ -75,6 +78,14 @@
                 android:layout_gravity="left"
                 android:layout_marginStart="10dp"
                 android:text="@string/add_tag" />
+
+            <Button
+                android:id="@+id/editTagBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginHorizontal="10dp"
+                android:text="@string/edit_button" />
 
             <Button
                 android:id="@+id/slideBtn"

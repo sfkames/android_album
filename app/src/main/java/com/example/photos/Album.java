@@ -3,6 +3,7 @@ package com.example.photos;
 import android.graphics.Bitmap;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,11 +37,11 @@ public class Album implements Serializable {
     public Album(String name, ArrayList<Photo> photos) {
         Name = name;
         Photos = photos;
-        if (photos != null) {
-            if (photos.size() != 0) {
-                this.coverPath = photos.get(0).getImage();
-            }
-        }
+//        if (photos != null) {
+//            if (photos.size() != 0) {
+//                this.coverPath = photos.get(0).getImage();
+//            }
+//        }
     }
 
     /**
@@ -51,17 +52,17 @@ public class Album implements Serializable {
      * @see Photos
      */
 
-    public void updateCoverPath() {
-        if (Photos != null) {
-            if (Photos.size() > 0) {
-                if (Photos.get(0).getImage() != null) {
-                    this.coverPath = Photos.get(0).getImage();
-                }
-            } else {
-                this.coverPath = null;
-            }
-        }
-    }
+//    public void updateCoverPath() {
+//        if (Photos != null) {
+//            if (Photos.size() > 0) {
+//                if (Photos.get(0).getImage() != null) {
+//                    this.coverPath = Photos.get(0).getImage();
+//                }
+//            } else {
+//                this.coverPath = null;
+//            }
+//        }
+//    }
 
     /**
      * getName() returns the String Name of the Album.
@@ -149,10 +150,9 @@ public class Album implements Serializable {
 
     public static Album emptyAlbum(){
         ArrayList<Photo>  photos = new ArrayList<Photo>();
-        photos.add(new Photo(null));
+        photos.add(new Photo(null,null,0,0));
         Album emptyAlbum = new Album("No Albums",photos);
         return emptyAlbum;
     }
 
 }
-

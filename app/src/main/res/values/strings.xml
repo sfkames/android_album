@@ -16,9 +16,15 @@
     <string name="person_label">Person</string>
     <string name="return_button">Return to Album</string>
     <string name="add_button">Add Tag</string>
+    <string name="edit_button">Edit Tag</string>
+    <string name="delete_tag_button">Delete Tag</string>
     <string name="slide_button">View Slideshow</string>
     <string name="back_button">Return to All Albums</string>
     <string name="slideShowNext"><![CDATA[>]]></string>
     <string name="slideShowBack"><![CDATA[<]]></string>
+    <string name="search_title">Search By Tags</string>
+    <string name="locationLabel">Location:</string>
+    <string name="enter_location">Enter Location...</string>
+
 
 </resources>

@@ -80,6 +80,13 @@ public class MainActivity extends AppCompatActivity {
             load = false;
         }
 
+//        try {
+//            FileOutputStream outputStream = getApplicationContext().openFileOutput("albums.txt", Context.MODE_PRIVATE);
+//            Serialize.save(albumList, outputStream);
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+
         //load alvums and populate ListView
         albumList = Serialize.albums;
         populateListView();
@@ -112,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         //save with a FileOutputStream to 'albums.txt'
         try {
             FileOutputStream outputStream = getApplicationContext().openFileOutput("albums.txt", Context.MODE_PRIVATE);
-            Serialize.save(albumList, outputStream);
+            Serialize.save(outputStream);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -136,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
         //create new album, add to List, and populate list view
         albumList.add(new Album("New Album " + NACheck, new ArrayList<Photo>()));
         populateListView();
-
+        System.out.println(Serialize.albums.size() + "album size");
     }
     private void handleDelete(){
         CharSequence text = "Select Album";

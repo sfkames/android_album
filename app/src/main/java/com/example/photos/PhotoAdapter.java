@@ -31,7 +31,7 @@ public class PhotoAdapter extends ArrayAdapter<Photo> {
             convertView = LayoutInflater.from(context).inflate(R.layout.photo_item,parent,false);
         }
         ImageView thumbnail = (ImageView) convertView.findViewById(R.id.thumbnail) ;
-        thumbnail.setImageBitmap(album.get(position).getImage());
+        thumbnail.setImageBitmap(PhotosViewActivity.byteToBitmap(album.get(position)));
         return convertView;
     }
 }
