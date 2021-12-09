@@ -25,6 +25,8 @@
     <string name="search_title">Search By Tags</string>
     <string name="locationLabel">Location:</string>
     <string name="enter_location">Enter Location...</string>
+    <string name="move_button">Move to New Album</string>
+    <string name="move_photo_button">Move Photo</string>
 
 
 </resources>

@@ -6,104 +6,149 @@
     android:layout_height="match_parent"
     tools:context=".PhotosViewActivity">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteY="1dp">
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="412dp"
+        android:layout_height="152dp"
+        android:gravity="start"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="152dp"
+            android:layout_height="152dp"
+            android:layout_marginStart="30dp"
+            android:contentDescription="@string/photo"
+            android:scaleType="fitStart"
+            app:srcCompat="@drawable/ic_launcher_background"
+            tools:ignore="ImageContrastCheck" />
+
+        <TextView
+            android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:layout_marginHorizontal="10dp"
+            android:text="TextView"
+            android:textColor="#CD1C1A1A"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
-            <ImageView
-                android:id="@+id/imageView"
-                android:layout_width="300dp"
-                android:layout_height="300dp"
-                android:contentDescription="@string/photo"
-                android:scaleType="centerInside"
-                app:srcCompat="@drawable/ic_launcher_background"
-                tools:ignore="ImageContrastCheck" />
+    <FrameLayout
+        android:id="@+id/frameLayout3"
+        android:layout_width="410dp"
+        android:layout_height="150dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
-            <TextView
-                android:id="@+id/textView"
+        <ListView
+            android:id="@+id/photoList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:choiceMode="singleChoice"
+            android:listSelector="#dbe0c8" />
+    </FrameLayout>
+
+    <ScrollView
+        android:id="@+id/scrollView4"
+        android:layout_width="403dp"
+        android:layout_height="wrap_content"
+        android:scrollbarStyle="outsideOverlay"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frameLayout3">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textAlignment="center"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:layout_height="match_parent">
 
-            <FrameLayout
-                android:layout_width="410dp"
-                android:layout_height="162dp"
-                android:layout_marginTop="1dp">
+                <Button
+                    android:id="@+id/addBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:text="@string/add_photo" />
 
-                <ListView
-                    android:id="@+id/photoList"
+                <Button
+                    android:id="@+id/removeBtn"
                     android:layout_width="match_parent"
-                    android:layout_height="161dp"
-                    android:choiceMode="singleChoice"
-                    android:listSelector="#dbe0c8" />
-            </FrameLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/remove_photo" />
+            </TableRow>
 
-            <!--            <TextView-->
-            <!--                android:id="@+id/textView"-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:text="@string/album_name"-->
-            <!--                android:translationX="150dp" />-->
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/addBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:layout_marginStart="10dp"
-                android:text="@string/add_photo" />
+            </TableRow>
 
-            <Button
-                android:id="@+id/removeBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_gravity="left"
-                android:text="@string/remove_photo" />
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/tagBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:layout_marginStart="10dp"
-                android:text="@string/add_tag" />
+                <Button
+                    android:id="@+id/tagBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|left"
+                    android:text="@string/add_tag" />
 
-            <Button
-                android:id="@+id/editTagBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:layout_marginHorizontal="10dp"
-                android:text="@string/edit_button" />
+                <Button
+                    android:id="@+id/editTagBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|left"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/edit_button" />
 
-            <Button
-                android:id="@+id/slideBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:layout_marginStart="10dp"
-                android:text="@string/slide_button" />
+            </TableRow>
 
-            <Button
-                android:id="@+id/backBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:layout_marginStart="10dp"
-                android:text="@string/back_button" />
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-        </LinearLayout>
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/slideBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|left"
+                    android:text="@string/slide_button" />
+
+                <Button
+                    android:id="@+id/movePhotoBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|left"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/move_photo_button" />
+
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/backBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:text="@string/back_button" />
+            </TableRow>
+        </TableLayout>
     </ScrollView>
 
 

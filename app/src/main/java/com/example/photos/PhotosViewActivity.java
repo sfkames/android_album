@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,14 +24,15 @@ import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class PhotosViewActivity extends AppCompatActivity {
 
     ImageView imageView;
-    Button addBtn, removeBtn, tagBtn, slideBtn, backBtn, editTagBtn;
+    Button addBtn, removeBtn, tagBtn, slideBtn, backBtn, editTagBtn, movePhotoBtn;
     TextView textView;
     private static int RESULT_LOAD_IMG = 1;
-    public ArrayList<Photo> album = new ArrayList<Photo>();
+    public static ArrayList<Photo> album = new ArrayList<Photo>();
     public ArrayList<Tags> tags = new ArrayList<Tags>();
     private ListView listView;
     private int selectedIndex = -1;
@@ -43,9 +45,7 @@ public class PhotosViewActivity extends AppCompatActivity {
         configureNextButton();
         Intent intent = getIntent();
 
-
         albumIndex = intent.getIntExtra("album", -1);
-
 
         album = Serialize.albums.get(albumIndex).getPhotos();
         populateListView();
@@ -59,6 +59,7 @@ public class PhotosViewActivity extends AppCompatActivity {
         listView = findViewById(R.id.photoList);
         textView = findViewById(R.id.textView);
         editTagBtn = (Button) findViewById(R.id.editTagBtn);
+        movePhotoBtn = (Button) findViewById(R.id.movePhotoBtn);
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,12 +124,24 @@ public class PhotosViewActivity extends AppCompatActivity {
             }
         });
 
+        movePhotoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(PhotosViewActivity.this, MovePhoto.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("album", albumIndex);
+                bundle.putInt("photo", selectedIndex);
+                intent.putExtras(bundle);
+                startActivity(intent);
+//                populateListView();
+            }
+        });
+
     }
 
     @Override
     protected void onActivityResult(int reqCode, int resultCode, Intent data) {
         super.onActivityResult(reqCode, resultCode, data);
-
 
         if (resultCode == RESULT_OK) {
             try {
@@ -205,8 +218,10 @@ public class PhotosViewActivity extends AppCompatActivity {
         //connect ListView variable to actual ListView in xml
         listView = findViewById(R.id.photoList);
         textView = findViewById(R.id.textView);
-        //check if albumList is Empty and create pointer to Album
+        imageView = findViewById(R.id.imageView);
+//        album = Serialize.albums.get(albumIndex).getPhotos();
 
+        //check if albumList is Empty and create pointer to Album
         if(album.size() == 0) {
             ArrayList<String> listPointer = new ArrayList<String>();
             listPointer.add("No Photos to Display");
@@ -219,27 +234,50 @@ public class PhotosViewActivity extends AppCompatActivity {
             );
 
             listView.setChoiceMode(0);
+            imageView.setImageDrawable(Drawable.createFromPath("@drawable/question_mark.jpeg"));
             textView.setText("No Tags to Display");
 
 
         }else{
+            imageView.setImageBitmap(byteToBitmap(album.get(0)));
+            AtomicReference<String> locationTag= new AtomicReference<>("Location: ");
+            AtomicReference<String> personTag = new AtomicReference<>("Person: ");
+
+            if(album.get(0).getTags() != null) {
+                if (album.get(0).getTags().size() != 0) {
+                    ArrayList<Tags> tagList = album.get(0).getTags();
+                    for (int i = 0; i < tagList.size(); i++) {
+                        if (tagList.get(i).getTagType().equalsIgnoreCase("location")) {
+                            locationTag.set(locationTag + tagList.get(i).getTagName() + " ");
+                        } else {
+                            personTag.set(personTag + tagList.get(i).getTagName() + "\n");
+                        }
+                    }
+                    textView.setText(locationTag + "\n" + personTag);
+                } else {
+                    textView.setText("No Tags to Display");
+                }
+            } else {
+                textView.setText("No Tags to Display");
+            }
+
             com.example.photos.PhotoAdapter adapter = new com.example.photos.PhotoAdapter(getApplicationContext(), album);
             listView.setAdapter(adapter);
             listView.setOnItemClickListener((p, V, pos, id) -> {
                 selectedIndex = pos;
                 imageView.setImageBitmap(byteToBitmap(album.get(pos)));
 
-                String locationTag= "Location: ";
-                        String personTag = "Person: ";
+                locationTag.set("Location: ");
+                personTag.set("Person: ");
 
                         if(album.get(pos).getTags() != null) {
                             if (album.get(pos).getTags().size() != 0) {
                                 ArrayList<Tags> tagList = album.get(pos).getTags();
                                 for (int i = 0; i < tagList.size(); i++) {
                                     if (tagList.get(i).getTagType().equalsIgnoreCase("location")) {
-                                        locationTag = locationTag + tagList.get(i).getTagName() + " ";
+                                        locationTag.set(locationTag + tagList.get(i).getTagName() + " ");
                                     } else {
-                                        personTag = personTag + tagList.get(i).getTagName() + "\n";
+                                        personTag.set(personTag + tagList.get(i).getTagName() + "\n");
                                     }
                                 }
                                 textView.setText(locationTag + "\n" + personTag);

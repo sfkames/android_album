@@ -31,10 +31,11 @@ public class SlideShow extends AppCompatActivity {
         Intent intent = getIntent();
 
         albumIndex = intent.getIntExtra("album", -1);
+        photoIndex = intent.getIntExtra("photo", -1);
 
         album = Serialize.albums.get(albumIndex).getPhotos();
 
-        imageView.setImageBitmap(PhotosViewActivity.byteToBitmap(album.get(0)));
+        imageView.setImageBitmap(PhotosViewActivity.byteToBitmap(album.get(photoIndex)));
 
         leftBtn.setOnClickListener(new View.OnClickListener() {
             @Override
