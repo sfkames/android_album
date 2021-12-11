@@ -19,7 +19,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private ListView listView;
-    private Button openBtn, createBtn, deleteBtn, renameBtn;
+    private Button openBtn, createBtn, deleteBtn, renameBtn, searchBtn;
     private EditText renameText;
     public ArrayList<Album> albumList = Serialize.albums;
     public int selectedIndex = -1;
@@ -35,16 +35,18 @@ public class MainActivity extends AppCompatActivity {
         createBtn = findViewById(R.id.createBtn);
         createBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                handleCreate();
-            }
+            public void onClick(View v) { handleCreate(); }
         });
 
         deleteBtn = findViewById(R.id.deleteBtn);
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handleDelete();
+                if (albumList.size() == 0) {
+                    Toast.makeText(MainActivity.this, "No Albums to Modify", Toast.LENGTH_LONG).show();
+                } else {
+                    handleDelete();
+                }
             }
         });
 
@@ -52,7 +54,11 @@ public class MainActivity extends AppCompatActivity {
         renameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handleRename();
+                if (albumList.size() == 0) {
+                    Toast.makeText(MainActivity.this, "No Albums to Modify", Toast.LENGTH_LONG).show();
+                } else {
+                    handleRename();
+                }
             }
         });
 
@@ -60,7 +66,19 @@ public class MainActivity extends AppCompatActivity {
         openBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handleOpen();
+                if (albumList.size() == 0) {
+                    Toast.makeText(MainActivity.this, "No Albums to Modify", Toast.LENGTH_LONG).show();
+                } else {
+                    handleOpen();
+                }
+            }
+        });
+
+        searchBtn = findViewById(R.id.searchBtn);
+        searchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                handleSearch();
             }
         });
 
@@ -70,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
             FileInputStream inputStream = getApplicationContext().openFileInput("albums.txt");
             load = Serialize.load( inputStream );
             System.out.println("Successful load: "+ load);
+            Search.loadHints();
 
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -92,7 +111,17 @@ public class MainActivity extends AppCompatActivity {
         populateListView();
     }
 
+    private void handleSearch() {
 
+        if (albumList.size() == 0){
+            return;
+        }
+        Intent intent = new Intent(this, Search.class);
+        startActivity(intent);
+
+
+
+    }
 
     private void populateListView() {
         //connect ListView variable to actual ListView in xml
@@ -189,8 +218,15 @@ public class MainActivity extends AppCompatActivity {
         bundle.putInt("album", selectedIndex);
         intent.putExtras(bundle);
         startActivity(intent);
+        startActivityForResult(intent, 1);
+    }
 
+    protected void onActivityResult(int reqCode, int resultCode, Intent data) {
+        super.onActivityResult(reqCode, resultCode, data);
 
-
+        if(reqCode == 1){
+            System.out.println("updated after back");
+            populateListView();
+        }
     }
 }

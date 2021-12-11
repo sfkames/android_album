@@ -1,5 +1,6 @@
 package com.example.photos;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -29,6 +30,10 @@ public class EditTagActivity extends AppCompatActivity {
         int albumIndex = intent.getIntExtra("album", -1);
         int photoIndex = intent.getIntExtra("photo", -1);
         System.out.println(Serialize.albums.size() + "album size in edit");
+
+        if(photoIndex == -1) {
+            photoIndex = 0;
+        }
         photo = Serialize.albums.get(albumIndex).getPhotos().get(photoIndex);
         tagList = photo.getTags();
         System.out.println("album index" + albumIndex);
@@ -43,6 +48,8 @@ public class EditTagActivity extends AppCompatActivity {
         prevBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent =new Intent();
+                setResult(Activity.RESULT_OK, intent);
                 finish();
             }
         });
@@ -58,11 +65,19 @@ public class EditTagActivity extends AppCompatActivity {
     void handleRemove() {
         System.out.println("print in handleRemove() " + tagList.size());
         if(selectedIndex != -1) {
+            if (tagList.get(selectedIndex).getTagType().equalsIgnoreCase("location")) {
+                Search.locationTags.remove(tagList.get(selectedIndex).getTagName());
+                System.out.println("removed: location tag");
+            }
+            else if(tagList.get(selectedIndex).getTagType().equalsIgnoreCase("person")) {
+                Search.personTags.remove(tagList.get(selectedIndex).getTagName());
+                System.out.println("removed: person tag");
+            }
             tagList.remove(selectedIndex);
-            tags.remove(selectedIndex);
             if(tagList.size() == 0) {
                 selectedIndex = -1;
             }
+            populateListView();
         }
     }
 
@@ -80,6 +95,7 @@ public class EditTagActivity extends AppCompatActivity {
             );
             listView.setChoiceMode(0);
         } else {
+            tags.clear();
             ArrayList<String> listPointer = tags;
             for (int i = 0; i < tagList.size(); i++) {
                 listPointer.add(tagList.get(i).getTagType() + " : " + tagList.get(i).getTagName());

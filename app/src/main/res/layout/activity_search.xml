@@ -10,7 +10,7 @@
         android:id="@+id/search_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="16dp"
         android:text="@string/search_title"
         android:textColor="#000000"
         android:textSize="30sp"
@@ -19,25 +19,98 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <AutoCompleteTextView
+        android:id="@+id/locationInput"
+        android:layout_width="174dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:hint="@string/enter_location"
+        app:layout_constraintStart_toEndOf="@+id/locationLabel"
+        app:layout_constraintTop_toBottomOf="@+id/search_title" />
+
     <TextView
         android:id="@+id/locationLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="85dp"
+        android:layout_marginTop="24dp"
         android:text="@string/locationLabel"
         android:textColor="#000000"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/search_title" />
 
+    <Button
+        android:id="@+id/SearchResultsBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:text="Search"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/personLabel2" />
+
+    <Button
+        android:id="@+id/goBackBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="67dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/back_button"
+        app:layout_constraintStart_toEndOf="@+id/SearchResultsBtn"
+        app:layout_constraintTop_toBottomOf="@+id/personInput" />
+
+    <TextView
+        android:id="@+id/personLabel2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="30dp"
+        android:text="Person:"
+        android:textColor="#000000"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/andSwitch" />
+
     <AutoCompleteTextView
-        android:id="@+id/locationInput"
+        android:id="@+id/personInput"
         android:layout_width="174dp"
         android:layout_height="50dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="72dp"
-        android:hint="@string/enter_location"
-        app:layout_constraintStart_toEndOf="@+id/locationLabel"
-        app:layout_constraintTop_toBottomOf="@+id/search_title" />
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="20dp"
+        android:hint="Enter Person..."
+        app:layout_constraintStart_toEndOf="@+id/personLabel2"
+        app:layout_constraintTop_toBottomOf="@+id/andSwitch" />
+
+    <Switch
+        android:id="@+id/orSwitch"
+        android:layout_width="83dp"
+        android:layout_height="62dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="28dp"
+        android:minHeight="48dp"
+        android:text="Or"
+        app:layout_constraintStart_toEndOf="@+id/andSwitch"
+        app:layout_constraintTop_toBottomOf="@+id/locationInput" />
+
+    <Switch
+        android:id="@+id/andSwitch"
+        android:layout_width="81dp"
+        android:layout_height="61dp"
+        android:layout_marginStart="56dp"
+        android:layout_marginTop="28dp"
+        android:minHeight="48dp"
+        android:text="And"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/locationInput" />
+
+    <ListView
+        android:id="@+id/searchListView"
+        android:layout_width="409dp"
+        android:layout_height="200dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/SearchResultsBtn" />
 </androidx.constraintlayout.widget.ConstraintLayout>

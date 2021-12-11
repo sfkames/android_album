@@ -2,6 +2,7 @@ package com.example.photos;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -37,6 +38,7 @@ public class PhotosViewActivity extends AppCompatActivity {
     private ListView listView;
     private int selectedIndex = -1;
     private int albumIndex = -1;
+    public static boolean moved = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +66,8 @@ public class PhotosViewActivity extends AppCompatActivity {
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent =new Intent();
+                setResult(Activity.RESULT_OK, intent);
                 finish();
             }
         });
@@ -85,25 +89,41 @@ public class PhotosViewActivity extends AppCompatActivity {
 //                photoPickerIntent.setType("image/*");
 //                startActivityForResult(photoPickerIntent, RESULT_LOAD_IMG);
                 getImageFromAlbum();
+//                populateListView();
             }
         });
 
         removeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handleRemove();
+                if(album.size() == 0) {
+                    Toast.makeText(PhotosViewActivity.this, "No Photos to Modify", Toast.LENGTH_LONG).show();
+                } else {
+                    handleRemove();
+                }
             }
         });
 
         editTagBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+//                ListView listView = findViewById(R.id.photoList);
                 Intent intent = new Intent(PhotosViewActivity.this, EditTagActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putInt("album", albumIndex);
                 bundle.putInt("photo", selectedIndex);
                 intent.putExtras(bundle);
-                startActivity(intent);
+                if(album.size() == 0) {
+                    Toast.makeText(PhotosViewActivity.this, "No Photos to Modify", Toast.LENGTH_LONG).show();
+                }
+                else if(selectedIndex == -1) {
+                    Toast.makeText(PhotosViewActivity.this, "Select Image", Toast.LENGTH_LONG).show();
+                } else {
+                    startActivityForResult(intent, 4);
+                    populateListView();
+//                    textView.setText("");
+                }
             }
         });
 
@@ -121,6 +141,7 @@ public class PhotosViewActivity extends AppCompatActivity {
                 else {
                     startActivity(intent);
                 }
+                System.out.println("Selected index = " + selectedIndex);
             }
         });
 
@@ -132,8 +153,18 @@ public class PhotosViewActivity extends AppCompatActivity {
                 bundle.putInt("album", albumIndex);
                 bundle.putInt("photo", selectedIndex);
                 intent.putExtras(bundle);
-                startActivity(intent);
-//                populateListView();
+                if(album.size() == 0) {
+                    Toast.makeText(PhotosViewActivity.this, "No Photos to Modify", Toast.LENGTH_LONG).show();
+                }
+                else if(Serialize.albums.size() == 1) {
+                    Toast.makeText(PhotosViewActivity.this, "No Other Albums", Toast.LENGTH_LONG).show();
+                }
+                else if (selectedIndex == -1) {
+                    Toast.makeText(PhotosViewActivity.this, "Select Image", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    startActivityForResult(intent,2);
+                }
             }
         });
 
@@ -142,32 +173,42 @@ public class PhotosViewActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int reqCode, int resultCode, Intent data) {
         super.onActivityResult(reqCode, resultCode, data);
+        System.out.println(reqCode + "something");
+        if(reqCode == 3) {
+            listViewReset();
+        }
+        else if(reqCode == 2) {
+            populateListView();
+        }
+        else if(reqCode == 4) {
+            populateListView();
+        } else {
+            System.out.println("reached for add");
+            if (resultCode == RESULT_OK) {
+                try {
+                    final Uri imageUri = data.getData();
+                    final InputStream imageStream = getContentResolver().openInputStream(imageUri);
+                    final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
+                    imageView.setImageBitmap(selectedImage);
+                    Bitmap bitmap = selectedImage;
 
-        if (resultCode == RESULT_OK) {
-            try {
-                final Uri imageUri = data.getData();
-                final InputStream imageStream = getContentResolver().openInputStream(imageUri);
-                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                imageView.setImageBitmap(selectedImage);
-                Bitmap bitmap = selectedImage;
 
+                    int size = bitmap.getRowBytes() * bitmap.getHeight();
+                    ByteBuffer byteBuffer = ByteBuffer.allocate(size);
+                    bitmap.copyPixelsToBuffer(byteBuffer);
+                    byte[] byteArray = byteBuffer.array();
 
-                int size = bitmap.getRowBytes() * bitmap.getHeight();
-                ByteBuffer byteBuffer = ByteBuffer.allocate(size);
-                bitmap.copyPixelsToBuffer(byteBuffer);
-                byte[] byteArray = byteBuffer.array();
+                    album.add(new Photo(byteArray, bitmap.getConfig().name(), bitmap.getWidth(), bitmap.getHeight()));
 
-                album.add(new Photo(byteArray,bitmap.getConfig().name(),bitmap.getWidth(),bitmap.getHeight()));
+                    populateListView();
 
-                populateListView();
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                Toast.makeText(PhotosViewActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    Toast.makeText(PhotosViewActivity.this, "Something went wrong", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Toast.makeText(PhotosViewActivity.this, "You haven't picked an Image", Toast.LENGTH_LONG).show();
             }
-
-        }else {
-            Toast.makeText(PhotosViewActivity.this, "You haven't picked an Image",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -181,6 +222,7 @@ public class PhotosViewActivity extends AppCompatActivity {
             Log.i("Error",exp.toString());
         }
         textView.setText("No Tags to Display");
+        populateListView();
     }
 
     private void handleRemove(){
@@ -194,6 +236,27 @@ public class PhotosViewActivity extends AppCompatActivity {
         if(selectedIndex >= album.size()){
             toast.show();
             return;
+        }
+        ArrayList<Tags> photoTags = album.get(selectedIndex).getTags();
+        for(int i = 0; i < photoTags.size(); i++) {
+            if (photoTags.get(i).getTagType() == "location") {
+                Search.locationTags.remove(photoTags.get(i).getTagName());
+            }
+            else if(photoTags.get(i).getTagType() == "person") {
+                Tags tag = photoTags.get(i);
+                if (tag instanceof CustomTags) {
+                    CustomTags custom = (CustomTags) tag;
+                    if (tag.getTagType().equalsIgnoreCase("person")) {
+
+                        ArrayList<String> people = new ArrayList<>();
+
+                        for (int j = 0; j < custom.getCustomTags().size(); j++) {
+                            people = custom.getCustomTags();
+                            Search.personTags.remove(people.get(j));
+                        }
+                    }
+                }
+            }
         }
         album.remove((selectedIndex));
         selectedIndex = -1;
@@ -262,32 +325,34 @@ public class PhotosViewActivity extends AppCompatActivity {
             }
 
             com.example.photos.PhotoAdapter adapter = new com.example.photos.PhotoAdapter(getApplicationContext(), album);
+//            adapter.notifyDataSetChanged();
             listView.setAdapter(adapter);
             listView.setOnItemClickListener((p, V, pos, id) -> {
+                System.out.println("pos = " + pos);
                 selectedIndex = pos;
                 imageView.setImageBitmap(byteToBitmap(album.get(pos)));
 
                 locationTag.set("Location: ");
                 personTag.set("Person: ");
 
-                        if(album.get(pos).getTags() != null) {
-                            if (album.get(pos).getTags().size() != 0) {
-                                ArrayList<Tags> tagList = album.get(pos).getTags();
-                                for (int i = 0; i < tagList.size(); i++) {
-                                    if (tagList.get(i).getTagType().equalsIgnoreCase("location")) {
-                                        locationTag.set(locationTag + tagList.get(i).getTagName() + " ");
-                                    } else {
-                                        personTag.set(personTag + tagList.get(i).getTagName() + "\n");
-                                    }
+                    if(album.get(pos).getTags() != null) {
+                        if (album.get(pos).getTags().size() != 0) {
+                            ArrayList<Tags> tagList = album.get(pos).getTags();
+                            for (int i = 0; i < tagList.size(); i++) {
+                                if (tagList.get(i).getTagType().equalsIgnoreCase("location")) {
+                                    locationTag.set(locationTag + tagList.get(i).getTagName() + " ");
+                                } else {
+                                    personTag.set(personTag + tagList.get(i).getTagName() + "\n");
                                 }
-                                textView.setText(locationTag + "\n" + personTag);
-                            } else {
-                                textView.setText("No Tags to Display");
                             }
+                            textView.setText(locationTag + "\n" + personTag);
                         } else {
                             textView.setText("No Tags to Display");
                         }
+                    } else {
+                        textView.setText("No Tags to Display");
                     }
+                }
             );
 
 
@@ -299,7 +364,6 @@ public class PhotosViewActivity extends AppCompatActivity {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
     }
 
     private void configureNextButton() {
@@ -313,7 +377,14 @@ public class PhotosViewActivity extends AppCompatActivity {
                 bundle.putInt("album", albumIndex);
                 bundle.putInt("photo", selectedIndex);
                 intent.putExtras(bundle);
-                startActivity(intent);
+                if(selectedIndex == -1) {
+                    Toast.makeText(PhotosViewActivity.this, "No Photos to Modify", Toast.LENGTH_LONG).show();
+                } else {
+                    startActivityForResult(intent, 3);
+                    populateListView();
+                    listViewReset();
+//                    textView.setText("");
+                }
             }
         });
     }
@@ -326,5 +397,31 @@ public class PhotosViewActivity extends AppCompatActivity {
         return bitmap_tmp;
     }
 
+    void listViewReset() {
+        System.out.println("reached in reset");
+        ListView listView = findViewById(R.id.photoList);
+        textView = findViewById(R.id.textView);
+        AtomicReference<String> locationTag= new AtomicReference<>("Location: ");
+        AtomicReference<String> personTag = new AtomicReference<>("Person: ");
+        listView.setSelection(0);
+//        listView.getSelectedView().setSelected(true);
+        if(album.get(0).getTags() != null) {
+            if (album.get(0).getTags().size() != 0) {
+                ArrayList<Tags> tagList = album.get(0).getTags();
+                for (int i = 0; i < tagList.size(); i++) {
+                    if (tagList.get(i).getTagType().equalsIgnoreCase("location")) {
+                        locationTag.set(locationTag + tagList.get(i).getTagName() + " ");
+                    } else {
+                        personTag.set(personTag + tagList.get(i).getTagName() + "\n");
+                    }
+                }
+                textView.setText(locationTag + "\n" + personTag);
+            } else {
+                textView.setText("No Tags to Display");
+            }
+        } else {
+            textView.setText("No Tags to Display");
+        }
+    }
 }
 

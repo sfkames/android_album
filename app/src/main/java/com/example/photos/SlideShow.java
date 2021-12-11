@@ -35,6 +35,10 @@ public class SlideShow extends AppCompatActivity {
 
         album = Serialize.albums.get(albumIndex).getPhotos();
 
+        if(photoIndex == -1) {
+            photoIndex = 0;
+        }
+
         imageView.setImageBitmap(PhotosViewActivity.byteToBitmap(album.get(photoIndex)));
 
         leftBtn.setOnClickListener(new View.OnClickListener() {

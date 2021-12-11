@@ -1,7 +1,6 @@
 package com.example.photos;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +8,9 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,7 @@ public class MovePhoto extends AppCompatActivity {
     private int albumIndex = -1;
     private int photoIndex = -1;
     private Photo photo = new Photo(null, null, 0, 0);
+    public boolean moved = false;
 
 
     @Override
@@ -31,6 +34,7 @@ public class MovePhoto extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_move_photo);
 
+        moved = false;
         Intent intent = getIntent();
         albumIndex = intent.getIntExtra("album", -1);
         photoIndex = intent.getIntExtra("photo", -1);
@@ -43,13 +47,18 @@ public class MovePhoto extends AppCompatActivity {
         moveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 movePhoto();
             }
         });
 
         returnBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
+                Intent intent =new Intent();
+                intent.putExtra("moved", moved);
+                setResult(Activity.RESULT_OK, intent);
                 finish();
             }
         });
@@ -73,12 +82,20 @@ public class MovePhoto extends AppCompatActivity {
                 break;
             }
         }
+
         if(index != -1) {
+            if (moved == true) {
+                Toast.makeText(this, "Photo Already in Album", Toast.LENGTH_LONG).show();
+                return;
+            }
             albumList.get(index).getPhotos().add(albumList.get(albumIndex).getPhotos().get(photoIndex));
             albumList.get(albumIndex).getPhotos().remove(photoIndex);
-            //toast
+            Toast.makeText(this, "Successful Move!", Toast.LENGTH_LONG).show();
             System.out.println("reached");
+            moved = true;
+            return;
         }
+        Toast.makeText(this, "Unsuccessful Move!", Toast.LENGTH_LONG).show();
     }
 
     void populateListView() {

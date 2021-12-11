@@ -31,6 +31,11 @@ public class AlbumAdapter extends ArrayAdapter<Album> {
         }
         ImageView thumbnail = (ImageView) convertView.findViewById(R.id.thumbnail) ;
         thumbnail.setImageResource((int) R.drawable.question_mark);
+        if(albumList.get(position).getPhotos().size() != 0){
+            if(albumList.get(position).getPhotos().get(0).getImage() != null){
+                thumbnail.setImageBitmap(PhotosViewActivity.byteToBitmap(albumList.get(position).getPhotos().get(0)));
+            }
+        }
         TextView titleTextView = (TextView) convertView.findViewById(R.id.album_name);
         String AlbumName = albumList.get(position).getName();
         titleTextView.setText(AlbumName);
