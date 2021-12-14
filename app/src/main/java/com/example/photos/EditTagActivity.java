@@ -34,7 +34,12 @@ public class EditTagActivity extends AppCompatActivity {
         if(photoIndex == -1) {
             photoIndex = 0;
         }
-        photo = Serialize.albums.get(albumIndex).getPhotos().get(photoIndex);
+        try{
+            photo = Serialize.albums.get(albumIndex).getPhotos().get(photoIndex);
+        }catch (NullPointerException e){
+            finish();
+        }
+
         tagList = photo.getTags();
         System.out.println("album index" + albumIndex);
         System.out.println("album index" + Serialize.albums.size());

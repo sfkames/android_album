@@ -5,15 +5,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +24,10 @@ public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private Button openBtn, createBtn, deleteBtn, renameBtn, searchBtn;
     private EditText renameText;
+    private TextView currAlbum;
     public ArrayList<Album> albumList = Serialize.albums;
     public int selectedIndex = -1;
+    public AlbumAdapter adapter;
 
 
     @Override
@@ -82,6 +87,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        currAlbum = findViewById(R.id.currAlbum);
+
         //load albums
         boolean load = false;
         try {
@@ -126,25 +133,13 @@ public class MainActivity extends AppCompatActivity {
     private void populateListView() {
         //connect ListView variable to actual ListView in xml
         listView = findViewById(R.id.albumList);
-
-        //check if albumList is Empty and create pointer to Album -- or if not empty use albumAdapter
-        if(albumList.size() == 0) {
-            ArrayList<String> listPointer = new ArrayList<String>();
-            listPointer.add(Album.emptyAlbum().getName());
-            //populate ListView
-            listView.setAdapter(
-                    new ArrayAdapter<Album>(this, android.R.layout.simple_list_item_1, (List) listPointer)
-            );
-            listView.setChoiceMode(0);
-        }else{
-            AlbumAdapter adapter = new AlbumAdapter(getApplicationContext(), albumList);
-            listView.setAdapter(adapter);
-            listView.setOnItemClickListener((p, V, pos, id) -> {
-                System.out.println("Pos: "+pos);
-                selectedIndex = pos;
-            });
-        }
-
+        adapter = new AlbumAdapter(getApplicationContext(), albumList);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener((p, V, pos, id) -> {
+            System.out.println("Pos: "+pos);
+            selectedIndex = pos;
+            updateCurrAlbum();
+        });
         //save with a FileOutputStream to 'albums.txt'
         try {
             FileOutputStream outputStream = getApplicationContext().openFileOutput("albums.txt", Context.MODE_PRIVATE);
@@ -156,7 +151,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handleCreate(){
-
         //# of 'new album' names already in list
         int NACheck = 0;
         for (int i = 0; i < albumList.size(); i++) {
@@ -171,7 +165,10 @@ public class MainActivity extends AppCompatActivity {
 
         //create new album, add to List, and populate list view
         albumList.add(new Album("New Album " + NACheck, new ArrayList<Photo>()));
-        populateListView();
+//        populateListView();
+
+        adapter.notifyDataSetChanged();
+        updateCurrAlbum();
         System.out.println(Serialize.albums.size() + "album size");
     }
     private void handleDelete(){
@@ -186,10 +183,24 @@ public class MainActivity extends AppCompatActivity {
             toast.show();
            return;
         }
+
+        ArrayList<Photo> album = albumList.get(selectedIndex).getPhotos();
+        for(int i = 0; i< album.size(); i++){
+            Photo photo = album.get(i);
+            for(int j = 0; j < photo.getTags().size(); j++){
+                if(photo.getTags().get(j).tagType.equalsIgnoreCase("location")){
+                    Search.locationTags.remove(photo.getTags().get(j).tagName);
+                }else{
+                    Search.personTags.remove(photo.getTags().get(j).tagName);
+                }
+            }
+        }
+
         albumList.remove((selectedIndex));
         selectedIndex = -1;
-        populateListView();
-
+//        populateListView();
+        adapter.notifyDataSetChanged();
+        updateCurrAlbum();
     }
     private void handleRename() {
         renameText = findViewById(R.id.renameText);
@@ -204,7 +215,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         albumList.get(selectedIndex).setName(input);
-        populateListView();
+//        populateListView();
+        adapter.notifyDataSetChanged();
+        updateCurrAlbum();
         renameText.setText("");
     }
 
@@ -217,7 +230,6 @@ public class MainActivity extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putInt("album", selectedIndex);
         intent.putExtras(bundle);
-        startActivity(intent);
         startActivityForResult(intent, 1);
     }
 
@@ -226,7 +238,22 @@ public class MainActivity extends AppCompatActivity {
 
         if(reqCode == 1){
             System.out.println("updated after back");
-            populateListView();
+//            populateListView();
+            adapter.notifyDataSetChanged();
+            updateCurrAlbum();
+        }
+    }
+    private void updateCurrAlbum(){
+        if(albumList.size() == 0 || selectedIndex == -1){
+            currAlbum.setText("Nothing Selected");
+        }else{
+            currAlbum.setText("Selected: \n"+ albumList.get(selectedIndex).getName());
+        }
+        try {
+            FileOutputStream outputStream = getApplicationContext().openFileOutput("albums.txt", Context.MODE_PRIVATE);
+            Serialize.save(outputStream);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 }

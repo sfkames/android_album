@@ -1,7 +1,6 @@
 package com.example.photos;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -39,6 +38,7 @@ public class PhotosViewActivity extends AppCompatActivity {
     private int selectedIndex = -1;
     private int albumIndex = -1;
     public static boolean moved = false;
+    public PhotoAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +121,8 @@ public class PhotosViewActivity extends AppCompatActivity {
                     Toast.makeText(PhotosViewActivity.this, "Select Image", Toast.LENGTH_LONG).show();
                 } else {
                     startActivityForResult(intent, 4);
-                    populateListView();
+//                    populateListView();
+                    adapter.notifyDataSetChanged();
 //                    textView.setText("");
                 }
             }
@@ -176,12 +177,22 @@ public class PhotosViewActivity extends AppCompatActivity {
         System.out.println(reqCode + "something");
         if(reqCode == 3) {
             listViewReset();
+            adapter.notifyDataSetChanged();
         }
         else if(reqCode == 2) {
             populateListView();
+            adapter.notifyDataSetChanged();
+            if(album.size() == 0){
+                if(imageView != null && textView!= null){
+                    imageView.setImageBitmap(null);
+                    textView.setText("No Tags to Display");
+                }
+
+            }
         }
         else if(reqCode == 4) {
             populateListView();
+            adapter.notifyDataSetChanged();
         } else {
             System.out.println("reached for add");
             if (resultCode == RESULT_OK) {
@@ -201,6 +212,7 @@ public class PhotosViewActivity extends AppCompatActivity {
                     album.add(new Photo(byteArray, bitmap.getConfig().name(), bitmap.getWidth(), bitmap.getHeight()));
 
                     populateListView();
+                    adapter.notifyDataSetChanged();
 
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
@@ -223,6 +235,7 @@ public class PhotosViewActivity extends AppCompatActivity {
         }
         textView.setText("No Tags to Display");
         populateListView();
+        adapter.notifyDataSetChanged();
     }
 
     private void handleRemove(){
@@ -261,6 +274,7 @@ public class PhotosViewActivity extends AppCompatActivity {
         album.remove((selectedIndex));
         selectedIndex = -1;
         populateListView();
+        adapter.notifyDataSetChanged();
         if(album.size() == 0) {
             imageView.setImageBitmap(null);
         }
@@ -283,30 +297,15 @@ public class PhotosViewActivity extends AppCompatActivity {
         textView = findViewById(R.id.textView);
         imageView = findViewById(R.id.imageView);
 //        album = Serialize.albums.get(albumIndex).getPhotos();
+        AtomicReference<String> locationTag= new AtomicReference<>("Location: ");
+        AtomicReference<String> personTag = new AtomicReference<>("Person: ");
 
-        //check if albumList is Empty and create pointer to Album
-        if(album.size() == 0) {
-            ArrayList<String> listPointer = new ArrayList<String>();
-            listPointer.add("No Photos to Display");
-
-            System.out.println(listPointer.get(0));
-
-            //populate ListView
-            listView.setAdapter(
-                    new ArrayAdapter<Album>(this, android.R.layout.simple_list_item_1, (List) listPointer)
-            );
-
-            listView.setChoiceMode(0);
-            imageView.setImageDrawable(Drawable.createFromPath("@drawable/question_mark.jpeg"));
-            textView.setText("No Tags to Display");
-
-
-        }else{
+        //check if albumList is Empty and create pointer to Album\
+        if(album.size() != 0) {
             imageView.setImageBitmap(byteToBitmap(album.get(0)));
-            AtomicReference<String> locationTag= new AtomicReference<>("Location: ");
-            AtomicReference<String> personTag = new AtomicReference<>("Person: ");
 
-            if(album.get(0).getTags() != null) {
+
+            if (album.get(0).getTags() != null) {
                 if (album.get(0).getTags().size() != 0) {
                     ArrayList<Tags> tagList = album.get(0).getTags();
                     for (int i = 0; i < tagList.size(); i++) {
@@ -323,40 +322,42 @@ public class PhotosViewActivity extends AppCompatActivity {
             } else {
                 textView.setText("No Tags to Display");
             }
-
-            com.example.photos.PhotoAdapter adapter = new com.example.photos.PhotoAdapter(getApplicationContext(), album);
+        }
+        if(adapter == null) {
+            adapter = new PhotoAdapter(getApplicationContext(), album);
 //            adapter.notifyDataSetChanged();
             listView.setAdapter(adapter);
             listView.setOnItemClickListener((p, V, pos, id) -> {
-                System.out.println("pos = " + pos);
-                selectedIndex = pos;
-                imageView.setImageBitmap(byteToBitmap(album.get(pos)));
+                        System.out.println("pos = " + pos);
+                        selectedIndex = pos;
+                        imageView.setImageBitmap(byteToBitmap(album.get(pos)));
 
-                locationTag.set("Location: ");
-                personTag.set("Person: ");
+                        locationTag.set("Location: ");
+                        personTag.set("Person: ");
 
-                    if(album.get(pos).getTags() != null) {
-                        if (album.get(pos).getTags().size() != 0) {
-                            ArrayList<Tags> tagList = album.get(pos).getTags();
-                            for (int i = 0; i < tagList.size(); i++) {
-                                if (tagList.get(i).getTagType().equalsIgnoreCase("location")) {
-                                    locationTag.set(locationTag + tagList.get(i).getTagName() + " ");
-                                } else {
-                                    personTag.set(personTag + tagList.get(i).getTagName() + "\n");
+                        if (album.get(pos).getTags() != null) {
+                            if (album.get(pos).getTags().size() != 0) {
+                                ArrayList<Tags> tagList = album.get(pos).getTags();
+                                for (int i = 0; i < tagList.size(); i++) {
+                                    if (tagList.get(i).getTagType().equalsIgnoreCase("location")) {
+                                        locationTag.set(locationTag + tagList.get(i).getTagName() + " ");
+                                    } else {
+                                        personTag.set(personTag + tagList.get(i).getTagName() + "\n");
+                                    }
                                 }
+                                textView.setText(locationTag + "\n" + personTag);
+                            } else {
+                                textView.setText("No Tags to Display");
                             }
-                            textView.setText(locationTag + "\n" + personTag);
                         } else {
                             textView.setText("No Tags to Display");
                         }
-                    } else {
-                        textView.setText("No Tags to Display");
                     }
-                }
             );
-
-
         }
+
+
+
         try {
             FileOutputStream outputStream = getApplicationContext().openFileOutput("albums.txt", Context.MODE_PRIVATE);
             Serialize.save(outputStream);
@@ -378,10 +379,11 @@ public class PhotosViewActivity extends AppCompatActivity {
                 bundle.putInt("photo", selectedIndex);
                 intent.putExtras(bundle);
                 if(selectedIndex == -1) {
-                    Toast.makeText(PhotosViewActivity.this, "No Photos to Modify", Toast.LENGTH_LONG).show();
+                    Toast.makeText(PhotosViewActivity.this, "Select Photo", Toast.LENGTH_LONG).show();
                 } else {
                     startActivityForResult(intent, 3);
                     populateListView();
+                    adapter.notifyDataSetChanged();
                     listViewReset();
 //                    textView.setText("");
                 }

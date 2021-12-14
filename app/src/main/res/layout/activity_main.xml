@@ -25,8 +25,8 @@
             android:id="@+id/albumList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:choiceMode="singleChoice"
-            android:listSelector="#dbe0c8" />
+            android:fastScrollEnabled="false"
+            android:dividerHeight="5dp" />
     </FrameLayout>
 
     <ScrollView
@@ -49,13 +49,28 @@
             <!--                android:text="@string/album_name"-->
             <!--                android:translationX="150dp" />-->
 
-            <Button
-                android:id="@+id/openBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
 
-                android:layout_marginStart="10dp"
-                android:text="@string/open_album" />
+                <Button
+                    android:id="@+id/openBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginStart="10dp"
+                    android:text="@string/open_album" />
+
+                <TextView
+                    android:id="@+id/currAlbum"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="50dp"
+                    android:text="Nothing Selected"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </TableRow>
 
             <Button
                 android:id="@+id/createBtn"

@@ -11,13 +11,13 @@
         android:theme="@style/Theme.Photos">
         <activity
             android:name=".MovePhoto"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".Search"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".SlideShow"
-            android:exported="false" />
+            android:exported="false"/>
         <activity
             android:name=".PhotosViewActivity"
             android:parentActivityName=".MainActivity" />
@@ -29,7 +29,9 @@
             android:parentActivityName=".PhotosViewActivity" />
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTop">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

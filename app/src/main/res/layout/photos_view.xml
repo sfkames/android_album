@@ -22,7 +22,6 @@
             android:layout_marginStart="30dp"
             android:contentDescription="@string/photo"
             android:scaleType="fitStart"
-            app:srcCompat="@drawable/ic_launcher_background"
             tools:ignore="ImageContrastCheck" />
 
         <TextView

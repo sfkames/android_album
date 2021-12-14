@@ -37,10 +37,12 @@ public class Search extends AppCompatActivity {
                 findViewById(R.id.locationInput);
         personTV = (AutoCompleteTextView)
                 findViewById(R.id.personInput);
+        ArrayList<String> LTags = fixList(locationTags);
+        ArrayList<String> PTags = fixList(personTags);
         ArrayAdapter<String> Ladapter = new ArrayAdapter<String>
-                (this,android.R.layout.select_dialog_item, locationTags);
+                (this,android.R.layout.select_dialog_item, LTags);
         ArrayAdapter<String> Padapter = new ArrayAdapter<String>
-                (this,android.R.layout.select_dialog_item, personTags);
+                (this,android.R.layout.select_dialog_item, PTags);
         locationTV.setAdapter(Ladapter);
         personTV.setAdapter(Padapter);
 
@@ -63,6 +65,16 @@ public class Search extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private ArrayList<String> fixList(ArrayList<String> locationTags) {
+        ArrayList<String> finalArray = new ArrayList<String>();
+        for(int i = 0; i< locationTags.size();i++){
+            if(finalArray.indexOf(locationTags.get(i)) == -1){
+                finalArray.add(locationTags.get(i));
+            }
+        }
+        return finalArray;
     }
 
     private void handleSearch() {
