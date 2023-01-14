@@ -1,6 +1,7 @@
 # android_album
 Android app for single-user photo application that allows storage and management of photos in one or more albums
 
+CS213 Assignment 4
 Samantha Ames and Ahmed Elgazzar
 
 Photos
